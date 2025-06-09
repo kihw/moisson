@@ -1,13 +1,18 @@
 version: '3.8'
 
 services:
-  moisson:
+  eternatus:
     build: .
+    container_name: eternatus
     ports:
-      - "8080:80"
+      - "80"
     restart: unless-stopped
     container_name: moisson-app
-    
+    networks: 
+      - caddy_net
+networks:
+  caddy_net:
+    external: true
   # Service optionnel pour un reverse proxy avec SSL
   # nginx-proxy:
   #   image: nginx:alpine
