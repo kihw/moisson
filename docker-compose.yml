@@ -6,6 +6,8 @@ services:
       - "80"
     restart: unless-stopped
     container_name: moisson-app
+    volumes:
+      - /Docker/config/eternatus:/usr/share/nginx/html
     networks: 
       - caddy_net
 networks:
