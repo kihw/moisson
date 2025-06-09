@@ -40,6 +40,73 @@
             50% { background-color: #d4edda; }
             100% { background-color: transparent; }
         }
+
+        .dofusdb-link {
+            margin-left: 5px;
+        }
+
+        .dofusdb-link a {
+            color: #e67e22;
+            text-decoration: none;
+        }
+
+        .dofusdb-link a:hover {
+            color: #d35400;
+        }
+
+        .user-info {
+            color: #fff;
+            margin-right: 10px;
+        }
+
+        .login-form {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .login-form input {
+            display: inline-block;
+            width: 120px;
+            margin-right: 5px;
+            padding: 5px;
+            font-size: 12px;
+            height: 30px;
+        }
+
+        .login-form button {
+            padding: 5px 10px;
+            font-size: 12px;
+            height: 30px;
+        }
+
+        .sync-status {
+            color: #27ae60;
+            margin-left: 10px;
+        }
+
+        .sync-status.error {
+            color: #e74c3c;
+        }
+
+        .register-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .register-form {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            width: 300px;
+        }
     </style>
 </head>
 
@@ -64,13 +131,53 @@
                     <li ng-class="{active: appCtrl.sorting == 2}"><a href="#" ng-click="appCtrl.chooseSorting(2)">Étapes</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
+                    <!-- Système de connexion -->
+                    <li ng-if="!appCtrl.currentUser" class="navbar-text">
+                        <form class="login-form" ng-submit="appCtrl.login()">
+                            <input type="text" ng-model="appCtrl.loginData.username" placeholder="Nom d'utilisateur" required>
+                            <input type="password" ng-model="appCtrl.loginData.password" placeholder="Mot de passe" required>
+                            <button type="submit" class="btn btn-primary btn-sm">Connexion</button>
+                            <button type="button" class="btn btn-success btn-sm" ng-click="appCtrl.showRegister = true">S'inscrire</button>
+                        </form>
+                    </li>
+                    <li ng-if="appCtrl.currentUser" class="navbar-text">
+                        <span class="user-info">Connecté: {{ appCtrl.currentUser.username }}</span>
+                        <button class="btn btn-warning btn-sm" ng-click="appCtrl.syncData()">Synchroniser</button>
+                        <button class="btn btn-danger btn-sm" ng-click="appCtrl.logout()">Déconnexion</button>
+                        <span class="sync-status" ng-class="{error: appCtrl.syncError}">{{ appCtrl.syncMessage }}</span>
+                    </li>
                     <li><a href="#" data-toggle="modal" data-target="#saveModal">Sauvegarde</a></li>
                     <li><a href="#" data-toggle="modal" data-target="#helpModal">Aide</a></li>
                     <li><a href="#" data-toggle="modal" data-target="#aboutModal">A propos</a></li>
                 </ul>
-            </div><!--/.nav-collapse -->
+            </div>
         </div>
     </nav>
+
+    <!-- Modal d'inscription -->
+    <div class="register-overlay" ng-if="appCtrl.showRegister">
+        <div class="register-form">
+            <h4>Créer un compte</h4>
+            <form ng-submit="appCtrl.register()">
+                <div class="form-group">
+                    <label>Nom d'utilisateur</label>
+                    <input type="text" class="form-control" ng-model="appCtrl.registerData.username" required>
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" class="form-control" ng-model="appCtrl.registerData.password" required>
+                </div>
+                <div class="form-group">
+                    <label>Confirmer le mot de passe</label>
+                    <input type="password" class="form-control" ng-model="appCtrl.registerData.confirmPassword" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success">Créer le compte</button>
+                    <button type="button" class="btn btn-default" ng-click="appCtrl.showRegister = false">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <div class="container">
         <div class="row">
@@ -80,7 +187,6 @@
                         <div class="row">
                             <div class="col-xs-12 col-sm-3">
                                 Monstres : {{ appCtrl.owned('monster') }}/{{ appCtrl.total('monster') }}
-
                                 <div class="progress">
                                     <div class="progress-bar progress-bar-primary progress-bar-striped" role="progressbar" aria-valuenow="{{ appCtrl.ownedPercentage('monster') }}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: {{ appCtrl.ownedPercentage('monster') }}%;">
                                     {{ appCtrl.ownedPercentage('monster') }}%
@@ -89,7 +195,6 @@
                             </div>
                             <div class="col-xs-12 col-sm-3">
                                 Boss : {{ appCtrl.owned('boss') }}/{{ appCtrl.total('boss') }}
-
                                 <div class="progress">
                                     <div class="progress-bar progress-bar-primary progress-bar-striped" role="progressbar" aria-valuenow="{{ appCtrl.ownedPercentage('boss') }}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: {{ appCtrl.ownedPercentage('boss') }}%;">
                                     {{ appCtrl.ownedPercentage('boss') }}%
@@ -98,7 +203,6 @@
                             </div>
                             <div class="col-xs-12 col-sm-3">
                                 Archimonstres : {{ appCtrl.owned('archi') }}/{{ appCtrl.total('archi') }}
-
                                 <div class="progress">
                                     <div class="progress-bar progress-bar-primary progress-bar-striped" role="progressbar" aria-valuenow="{{ appCtrl.ownedPercentage('archi') }}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: {{ appCtrl.ownedPercentage('archi') }}%;">
                                     {{ appCtrl.ownedPercentage('archi') }}%
@@ -107,7 +211,6 @@
                             </div>
                             <div class="col-xs-12 col-sm-3">
                                 Etapes : {{ appCtrl.completedSteps() }}/{{ appCtrl.totalSteps }}
-
                                 <div class="progress">
                                     <div class="progress-bar progress-bar-primary progress-bar-striped" role="progressbar" aria-valuenow="{{ appCtrl.completedStepsPercentage() }}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: {{ appCtrl.completedStepsPercentage() }}%;">
                                     {{ appCtrl.completedStepsPercentage() }}%
@@ -121,7 +224,6 @@
                 <div class="row">
                     <div class="col-xs-12">
                         Total : {{ appCtrl.owned() }}/{{ appCtrl.monsters.length }}
-
                         <div class="progress">
                             <div class="progress-bar progress-bar-primary progress-bar-striped" role="progressbar" aria-valuenow="{{ appCtrl.ownedPercentage() }}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: {{ appCtrl.ownedPercentage() }}%;">
                             {{ appCtrl.ownedPercentage() }}%
@@ -131,52 +233,55 @@
                 </div>
 
                 <div ng-if="appCtrl.sorting == 0">
-
                     <div>
                         <div class="checkbox">
                             <label>
                                 <input type="checkbox" ng-model="appCtrl.displayOwnedMonsters" ng-change="appCtrl.toggleOwnedMonsters()" /> Masquer les monstres possédés
-                                </label>
-                            </div>
+                            </label>
                         </div>
-
-                        <div class="form-group">
-                            <input ng-model="search.$" style="width:100%" placeholder="Rechercher" class="form-control"/>
-                        </div>
-
-                        <table class="table table-stripped table-hover table-bordered">
-                            <thead>
-                                <tr>
-                                    <th style="width:50px;">Possédé</th>
-                                    <th>Nom</th>
-                                    <th>Étape</th>
-                                    <th>Zones</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                <tr ng-repeat="monster in appCtrl.monsters | orderBy:'name' | filter:search" ng-class="{success: appCtrl.isOwned(monster)}" ng-click="appCtrl.toggleMonster(monster)" ng-hide="appCtrl.displayOwnedMonsters && appCtrl.isOwned(monster)">
-                                    <td><input type="checkbox" ng-checked="appCtrl.isOwned(monster)" /></td>
-                                    <td>
-                                        <i class="glyphicon glyphicon-star" ng-if="monster.type == 'boss'"></i>
-                                        <i class="glyphicon glyphicon-fire" ng-if="monster.type == 'archi'"></i>
-                                        {{ monster.name }}
-                                        <button class="btn btn-xs btn-default copy-btn" ng-click="appCtrl.copyName(monster.name, $event)" title="Copier le nom">
-                                            <i class="glyphicon glyphicon-copy"></i>
-                                        </button>
-                                    </td>
-                                    <td>{{ monster.step }}</td>
-                                    <td>
-                                        <span class="label label-primary" ng-repeat="zone in monster.zones">{{ zone }}</span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
                     </div>
 
+                    <div class="form-group">
+                        <input ng-model="search.$" style="width:100%" placeholder="Rechercher" class="form-control"/>
+                    </div>
+
+                    <table class="table table-stripped table-hover table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="width:50px;">Possédé</th>
+                                <th>Nom</th>
+                                <th>Étape</th>
+                                <th>Zones</th>
+                                <th style="width:80px;">DofusDB</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr ng-repeat="monster in appCtrl.monsters | orderBy:'name' | filter:search" ng-class="{success: appCtrl.isOwned(monster)}" ng-click="appCtrl.toggleMonster(monster)" ng-hide="appCtrl.displayOwnedMonsters && appCtrl.isOwned(monster)">
+                                <td><input type="checkbox" ng-checked="appCtrl.isOwned(monster)" /></td>
+                                <td>
+                                    <i class="glyphicon glyphicon-star" ng-if="monster.type == 'boss'"></i>
+                                    <i class="glyphicon glyphicon-fire" ng-if="monster.type == 'archi'"></i>
+                                    {{ monster.name }}
+                                    <button class="btn btn-xs btn-default copy-btn" ng-click="appCtrl.copyName(monster.name, $event)" title="Copier le nom">
+                                        <i class="glyphicon glyphicon-copy"></i>
+                                    </button>
+                                </td>
+                                <td>{{ monster.step }}</td>
+                                <td>
+                                    <span class="label label-primary" ng-repeat="zone in monster.zones">{{ zone }}</span>
+                                </td>
+                                <td class="dofusdb-link">
+                                    <a href="{{ appCtrl.getDofusDbUrl(monster) }}" target="_blank" ng-click="$event.stopPropagation()" title="Voir sur DofusDB">
+                                        <i class="glyphicon glyphicon-link"></i> DB
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
-                <!-- Zones et Étapes sections avec boutons copier également -->
+                <!-- Zones section -->
                 <div ng-if="appCtrl.sorting == 1">
                     <div class="checkbox">
                         <label>
@@ -186,7 +291,6 @@
                     <div class="panel panel-default" ng-repeat="(zone, monsters) in appCtrl.zones" ng-hide="appCtrl.displayFinishedZones && appCtrl.owned(false, zone) == appCtrl.total(false, zone)">
                         <div class="panel-heading">
                             {{ zone }} ({{ appCtrl.owned(false, zone) }}/{{ appCtrl.total(false, zone) }})
-
                             <div class="pull-right">
                                 <button class="btn btn-info btn-xs" ng-click="appCtrl.toggleZone(zone)">
                                     Tout <span ng-if="appCtrl.owned(false, zone) == appCtrl.total(false, zone)">dé</span>cocher
@@ -200,9 +304,9 @@
                                     <th>Nom</th>
                                     <th>Étape</th>
                                     <th>Zones</th>
+                                    <th style="width:80px;">DofusDB</th>
                                 </tr>
                             </thead>
-
                             <tbody>
                                 <tr ng-repeat="monster in monsters" ng-class="{success: appCtrl.isOwned(monster)}" ng-click="appCtrl.toggleMonster(monster)">
                                     <td><input type="checkbox" ng-checked="appCtrl.isOwned(monster)" /></td>
@@ -218,12 +322,18 @@
                                     <td>
                                         <span class="label label-primary" ng-repeat="zone in monster.zones">{{ zone }}</span>
                                     </td>
+                                    <td class="dofusdb-link">
+                                        <a href="{{ appCtrl.getDofusDbUrl(monster) }}" target="_blank" ng-click="$event.stopPropagation()" title="Voir sur DofusDB">
+                                            <i class="glyphicon glyphicon-link"></i> DB
+                                        </a>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
 
+                <!-- Étapes section -->
                 <div ng-if="appCtrl.sorting == 2">
                     <div class="checkbox">
                         <label>
@@ -233,7 +343,6 @@
                     <div class="panel panel-default" ng-repeat="(step, monsters) in appCtrl.steps" ng-hide="step == 0 || (appCtrl.displayFinishedSteps && appCtrl.owned(false, false, step) == appCtrl.total(false, false, step))">
                         <div class="panel-heading">
                             Étape {{ step }} ({{ appCtrl.owned(false, false, step) }}/{{ appCtrl.total(false, false, step) }})
-
                             <div class="pull-right">
                                 <button class="btn btn-info btn-xs" ng-click="appCtrl.toggleStep(step)">
                                     Tout <span ng-if="appCtrl.owned(false, false, step) == appCtrl.total(false, false, step)">dé</span>cocher
@@ -246,9 +355,9 @@
                                     <th style="width:50px;">Possédé</th>
                                     <th>Nom</th>
                                     <th>Zones</th>
+                                    <th style="width:80px;">DofusDB</th>
                                 </tr>
                             </thead>
-
                             <tbody>
                                 <tr ng-repeat="monster in monsters" ng-class="{success: appCtrl.isOwned(monster)}" ng-click="appCtrl.toggleMonster(monster)">
                                     <td><input type="checkbox" ng-checked="appCtrl.isOwned(monster)" /></td>
@@ -262,6 +371,11 @@
                                     </td>
                                     <td>
                                         <span class="label label-primary" ng-repeat="zone in monster.zones">{{ zone }}</span>
+                                    </td>
+                                    <td class="dofusdb-link">
+                                        <a href="{{ appCtrl.getDofusDbUrl(monster) }}" target="_blank" ng-click="$event.stopPropagation()" title="Voir sur DofusDB">
+                                            <i class="glyphicon glyphicon-link"></i> DB
+                                        </a>
                                     </td>
                                 </tr>
                             </tbody>
@@ -288,7 +402,7 @@
         Nom copié dans le presse-papiers !
     </div>
 
-    <!-- Modales restantes inchangées -->
+    <!-- Modal de sauvegarde -->
     <div class="modal fade" id="saveModal" tabindex="-1" role="dialog" aria-labelledby="saveModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -316,6 +430,15 @@
 
                     <hr />
 
+                    <div ng-if="appCtrl.currentUser">
+                        <h5>Sauvegarde en ligne</h5>
+                        <p>Votre progression est automatiquement sauvegardée avec votre compte.</p>
+                        <button class="btn btn-info" ng-click="appCtrl.syncData()">Synchroniser maintenant</button>
+                        <span class="sync-status" ng-class="{error: appCtrl.syncError}">{{ appCtrl.syncMessage }}</span>
+                    </div>
+
+                    <hr />
+
                     <div class="text-center">
                         <h4>ATTENTION CELA VA TOUT EFFACER !!</h4>
                         <button class="btn btn-danger" ng-click="appCtrl.resetAll()">Remise à zéro</button>
@@ -330,6 +453,7 @@
         </div>
     </div>
 
+    <!-- Modal d'aide -->
     <div class="modal fade" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="helpModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -354,6 +478,14 @@
                     </p>
 
                     <p>
+                        <strong>DofusDB :</strong> Cliquez sur le lien "DB" à côté de chaque monstre pour voir ses détails sur DofusDB.
+                    </p>
+
+                    <p>
+                        <strong>Compte utilisateur :</strong> Créez un compte pour sauvegarder votre progression en ligne et la synchroniser entre différents appareils.
+                    </p>
+
+                    <p>
                         Si vous changez de navigateur vous pouvez exporter la sauvegarde pour la charger plus tard.
                     </p>
 
@@ -370,6 +502,7 @@
         </div>
     </div>
 
+    <!-- Modal à propos -->
     <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -394,6 +527,13 @@
 
                     <p>
                         Basé sur le projet original <a href="https://github.com/Mopolo/Eternelle-Moisson">Eternelle-Moisson</a> de Mopolo.
+                    </p>
+
+                    <p>
+                        <strong>Nouvelles fonctionnalités :</strong><br>
+                        - Liens vers DofusDB pour chaque monstre<br>
+                        - Système de compte utilisateur avec sauvegarde en ligne<br>
+                        - Synchronisation automatique des données
                     </p>
                 </div>
                 <div class="modal-footer">
