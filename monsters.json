@@ -1,0 +1,110 @@
+[
+    {
+        "id": 1,
+        "name": "Souris Grise",
+        "zones": [
+            "Cryptes du cimetière"
+        ],
+        "step": 1,
+        "type": "monster"
+    },
+    {
+        "id": 2,
+        "name": "Moskito",
+        "zones": [
+            "Bord de la forêt maléfique",
+            "Campagne d'Amakna"
+        ],
+        "step": 1,
+        "type": "monster"
+    },
+    {
+        "id": 3,
+        "name": "Arakne",
+        "zones": [
+            "Campagne d'Amakna",
+            "Forêt maléfique"
+        ],
+        "step": 1,
+        "type": "monster"
+    },
+    {
+        "id": 4,
+        "name": "Boufton Blanc",
+        "zones": [
+            "Coin des Bouftous",
+            "Tainéla"
+        ],
+        "step": 1,
+        "type": "monster"
+    },
+    {
+        "id": 5,
+        "name": "Boufton Noir",
+        "zones": [
+            "Coin des Bouftous",
+            "Tainéla"
+        ],
+        "step": 1,
+        "type": "monster"
+    },
+    {
+        "id": 6,
+        "name": "Tofu Maléfique",
+        "zones": [
+            "Cimetière",
+            "Cryptes du cimetière",
+            "Forêt maléfique"
+        ],
+        "step": 1,
+        "type": "monster"
+    },
+    {
+        "id": 7,
+        "name": "Arakne Malade",
+        "zones": [
+            "Souterrains d'Astrub"
+        ],
+        "step": 1,
+        "type": "monster"
+    },
+    {
+        "id": 8,
+        "name": "Piou Bleu",
+        "zones": [
+            "Astrub",
+            "Bonta",
+            "Brâkmar",
+            "Sufokia",
+            "Village d'Amakna"
+        ],
+        "step": 1,
+        "type": "monster"
+    },
+    {
+        "id": 9,
+        "name": "Piou Jaune",
+        "zones": [
+            "Astrub",
+            "Bonta",
+            "Brâkmar",
+            "Sufokia",
+            "Village d'Amakna"
+        ],
+        "step": 1,
+        "type": "monster"
+    },
+    {
+        "id": 10,
+        "name": "Piou Rouge",
+        "zones": [
+            "Astrub",
+            "Bonta",
+            "Brâkmar",
+            "Sufokia",
+            "Village d'Amakna"
+        ],
+        "step": 1,
+        "type": "monster"
+    }
+]
